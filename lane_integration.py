@@ -1,19 +1,15 @@
 #! /usr/bin/env python3
 
 import rospy
+import os
 import numpy as np
 import argparse
 from perception.code.tests.extract_lane_3d import perception_lane_info
-from perception.code.test_td_net import Load
+from perception.code.test_td_net import detect
 
 
 # lane information
 lanes = perception_lane_info()
-
-# traffic information
-load_traffic_data = Load()
-traffic_coords = Load.run()
-
 
 # perception loop
 class perception:
@@ -21,7 +17,11 @@ class perception:
         # Load the camera matrix and distortion coefficients obtained from calibration
         self.camera_matrix = np.load('camera_matrix.npy')
         self.dist_coeffs = np.load('dist_coeffs.npy')
-
+    
+    def info(self, path, opt):
+        result = detect(path, opt).Run()
+        return result
+    
 # load the arguments
 class args:
     def __init__(self) -> None:
@@ -41,9 +41,47 @@ class args:
         opt = self.parser.parse_args()
         return opt
 
+# pretest for arguments check
+class run:
+    def __init__(self) -> None:
+        pass
+
+    def load(self, opt):
+        if opt.source:
+            supSuffix =  ['mp4', 'avi', 'mpg', 'mov']
+            if os.path.isdir(opt.source):  
+                print("\nIt is a directory")
+                if not os.path.exists(opt.source + '/Config'): print('Configuration Not Found!'); return 0
+                for entry in os.scandir(opt.source):
+                    if entry.is_file():
+                        suffix = os.path.basename(entry.path).split('.')[1]
+                        if suffix in supSuffix:
+                            print(f">>>>> Start item : {entry.name}")
+                            return entry.path, opt
+                        else: print(f'Format not support for {os.path.basename(entry.path)}, supported formats are {supSuffix}')
+            else:
+                if os.path.exists(opt.source):
+                    root = os.path.dirname(os.path.abspath(opt.source))
+                    filename = os.path.basename(opt.source).split('.')[0]
+                    paths = root + '/' + filename
+                    if not os.path.exists(paths + '/config.json'): print('::: Configuration Not Found!'); return 0
+                    suffix = os.path.basename(opt.source).split('.')[1]
+                    if suffix in supSuffix:
+                        print(f">>>>> Start item : {opt.source}")
+                        return entry.path, opt
+                    else: print(f'Format not support for {os.path.basename(opt.source)}, supported formats are {supSuffix}')                
+                else: print(f'{opt.source} Not Found!')
+        else: print('Use --source [file/folder]')        
+
 # main function
 if __name__ == "__main__":
     # parsed arguments
     opt = args.parse_opt()
 
     # run the pretest
+    test = run()
+    path, opt = test.load(opt)
+
+    # perception 
+    perception_res = perception()
+    traffic_info = perception_res.info(path, opt)
