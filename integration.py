@@ -110,3 +110,5 @@ if __name__ == "__main__":
     for id, val in traffic_info.items():
         subscribe.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
     
+    # check for collision
+    subscribe.predict_collision()
