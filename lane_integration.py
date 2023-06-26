@@ -6,10 +6,8 @@ import numpy as np
 import argparse
 from perception.code.tests.extract_lane_3d import perception_lane_info
 from perception.code.test_td_net import detect
+from env_info.lane_info import LaneInfo 
 
-
-# lane information
-lanes = perception_lane_info()
 
 # perception loop
 class perception:
@@ -76,12 +74,19 @@ class run:
 # main function
 if __name__ == "__main__":
     # parsed arguments
-    opt = args.parse_opt()
+    arg = args()
+    opt = arg.parse_opt()
 
     # run the pretest
     test = run()
     path, opt = test.load(opt)
 
+    # lane information
+    lanes = perception_lane_info()
+    lane_info = lanes.lane_coordinates()
+
     # perception 
     perception_res = perception()
     traffic_info = perception_res.info(path, opt)
+
+    test = LaneInfo()
