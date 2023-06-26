@@ -6,8 +6,9 @@ import numpy as np
 import argparse
 from perception.code.tests.extract_lane_3d import perception_lane_info
 from perception.code.test_td_net import detect
-from env_info.lane_info import LaneInfo 
-
+from env_info.lane_info import LaneInfo
+from env_info.vehicle_info import VehicleInfo
+from Frenet.main_double_lanes import Environment, Subscriber
 
 # perception loop
 class perception:
@@ -81,12 +82,31 @@ if __name__ == "__main__":
     test = run()
     path, opt = test.load(opt)
 
-    # lane information
+    # lane information from perception
     lanes = perception_lane_info()
-    lane_info = lanes.lane_coordinates()
+    lane_coords = lanes.lane_coordinates()
 
     # perception 
     perception_res = perception()
     traffic_info = perception_res.info(path, opt)
 
-    test = LaneInfo()
+    # lane information for collision predictor
+    lanes = LaneInfo()
+    lane_info = lanes.coords_arr_to_point(lane_coords)
+
+    # environment information
+    no_of_vehicles = 0
+    vehicle_states = []
+    register = False
+    deregister = False 
+    interaction = False
+    env = Environment(no_of_vehicles, vehicle_states, register, deregister, interaction)
+
+    # subscribe the environment information
+    subscribe = Subscriber()
+
+    # vehicle information for collision predictor
+    vehicles = VehicleInfo()
+    for id, val in traffic_info.items():
+        subscribe.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
+    
