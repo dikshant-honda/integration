@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-import rospy
+import time
 import os
 import numpy as np
 import argparse
@@ -73,11 +73,18 @@ class run:
         else: print('Use --source [file/folder]')        
 
 # main function
-# looping?
 if __name__ == "__main__":
     # parsed arguments
     arg = args()
     opt = arg.parse_opt()
+
+    # computation time
+    time_taken = 0
+
+    # add in while loop
+    # start_time = time.time()
+    # end_time = time.time()
+    # time_taken += end_time - start_time
 
     # run the pretest
     test = run()
@@ -104,13 +111,16 @@ if __name__ == "__main__":
     env = Environment(no_of_vehicles, vehicle_states, register, deregister, interaction)
 
     # subscribe the environment information
-    predictions = Predictions()
+    predictions = Predictions(env, lane_info)
 
     # vehicle information for collision predictor
     vehicles = VehicleInfo()
     for id, val in traffic_info.items():
         predictions.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
     
+    # get the future trajectory
+    for vehicle in env.vehicle_states:
+        predictions.update(vehicle)
+
     # check for collision
-    # future waypoints estimation ?
     predictions.predict_collision()
