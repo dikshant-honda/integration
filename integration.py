@@ -8,7 +8,7 @@ from perception.code.tests.extract_lane_3d import perception_lane_info
 from perception.code.test_td_net import detect
 from env_info.lane_info import LaneInfo
 from env_info.vehicle_info import VehicleInfo
-from Frenet.main_double_lanes import Environment, Subscriber
+from Frenet.predictions import Environment, Predictions
 
 # perception loop
 class perception:
@@ -73,6 +73,7 @@ class run:
         else: print('Use --source [file/folder]')        
 
 # main function
+# looping?
 if __name__ == "__main__":
     # parsed arguments
     arg = args()
@@ -103,12 +104,13 @@ if __name__ == "__main__":
     env = Environment(no_of_vehicles, vehicle_states, register, deregister, interaction)
 
     # subscribe the environment information
-    subscribe = Subscriber()
+    predictions = Predictions()
 
     # vehicle information for collision predictor
     vehicles = VehicleInfo()
     for id, val in traffic_info.items():
-        subscribe.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
+        predictions.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
     
     # check for collision
-    subscribe.predict_collision()
+    # future waypoints estimation ?
+    predictions.predict_collision()
