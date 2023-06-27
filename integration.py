@@ -7,7 +7,7 @@ import argparse
 from perception.code.tests.extract_lane_3d import perception_lane_info
 from perception.code.test_td_net import detect
 from env_info.lane_info import LaneInfo
-from env_info.vehicle_info import VehicleInfo
+from env_info.vehicle_info import Vehicle
 from Frenet.predictions import Environment, Predictions
 
 # perception loop
@@ -18,7 +18,7 @@ class perception:
         self.dist_coeffs = np.load('dist_coeffs.npy')
     
     def info(self, path, opt):
-        result = detect(path, opt).Run()
+        result = detect(path, opt, self.camera_matrix, self.dist_coeffs).Run()
         return result
     
 # load the arguments
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     predictions = Predictions(env, lane_info)
 
     # vehicle information for collision predictor
-    vehicles = VehicleInfo()
+    vehicles = Vehicle()
     for id, val in traffic_info.items():
         predictions.add(vehicles.get_vehicle_state(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, angular velocity, lane
     
