@@ -92,8 +92,8 @@ if __name__ == "__main__":
     path, opt = test.load(opt)
 
     # lane information from perception
-    lanes = perception_lane_info()
-    lane_coords = lanes.lane_coordinates()
+    perception_lanes = perception_lane_info()
+    lane_coords = perception_lanes.lane_coordinates()
 
     # perception 
     perception_res = perception()
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     
     # get the future trajectory
     for vehicle in env.vehicles:
-        predictions.update(vehicle)
+        predictions.update(vehicle, perception_lanes)
 
     # check for collision
     predictions.predict_collision(env)
