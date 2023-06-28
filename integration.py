@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     # vehicle information for collision predictor
     for id, val in traffic_info.items():
-        predictions.add(Traffic(id, [val[0][0], val[0][1]], val[2], val[1], None, None))  # id, position, orientation, linear velocity, type, lane
+        predictions.add(Traffic(id, [val[0][0], val[0][1]], val[2], val[1], None, None, None, None))  # id, position, orientation, linear velocity, type, lane
     
     # get the future trajectory
     for vehicle in env.vehicles:
