@@ -112,7 +112,7 @@ if __name__ == "__main__":
     env = Environment(no_of_vehicles, vehicle_states, register, deregister, interaction)
 
     # subscribe the environment information
-    predictions = Predictions(env, lane_info)
+    predictions = Predictions()
 
     # vehicle information for collision predictor
     for id, val in traffic_info.items():
@@ -123,4 +123,4 @@ if __name__ == "__main__":
         predictions.update(vehicle)
 
     # check for collision
-    predictions.predict_collision()
+    predictions.predict_collision(env)
