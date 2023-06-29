@@ -12,7 +12,7 @@ from env_info.environment import Environment
 from Frenet.predictions import Predictions
 
 # perception loop
-class perception:
+class Perception:
     def __init__(self) -> None:
         # Load the camera matrix and distortion coefficients obtained from calibration
         self.camera_matrix = np.load('camera_matrix.npy')
@@ -42,7 +42,7 @@ class args:
         return opt
 
 # pretest for arguments check
-class run:
+class Run:
     def __init__(self) -> None:
         pass
 
@@ -88,16 +88,17 @@ if __name__ == "__main__":
     # time_taken += end_time - start_time
 
     # run the pretest
-    test = run()
+    test = Run()
     path, opt = test.load(opt)
 
-    # lane information from perception
-    perception_lanes = perception_lane_info()
-    lane_coords = perception_lanes.lane_coordinates()
-
     # perception 
-    perception_res = perception()
-    traffic_info = perception_res.info(path, opt)
+    perception = Perception()
+    traffic_info = perception.info(path, opt)
+
+
+    # lane information from perception
+    perception_lanes = perception_lane_info(perception.camera_matrix, perception.dist_coeffs)
+    lane_coords = perception_lanes.lane_coordinates()
 
     # lane information for collision predictor
     lanes = LaneInfo()
