@@ -95,7 +95,6 @@ if __name__ == "__main__":
     perception = Perception()
     traffic_info = perception.info(path, opt)
 
-
     # lane information from perception
     perception_lanes = perception_lane_info(perception.camera_matrix, perception.dist_coeffs)
     lane_coords = perception_lanes.lane_coordinates()
