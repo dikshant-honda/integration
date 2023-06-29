@@ -68,7 +68,7 @@ class run:
                     suffix = os.path.basename(opt.source).split('.')[1]
                     if suffix in supSuffix:
                         print(f">>>>> Start item : {opt.source}")
-                        return entry.path, opt
+                        return opt.source, opt
                     else: print(f'Format not support for {os.path.basename(opt.source)}, supported formats are {supSuffix}')                
                 else: print(f'{opt.source} Not Found!')
         else: print('Use --source [file/folder]')        
