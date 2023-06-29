@@ -11,4 +11,4 @@ k3 = 0.001  # Radial distortion coefficient k3
 # Define the distortion coefficients
 distortion_coeffs = np.array([k1, k2, p1, p2, k3])
 
-np.save("distortion_coeffs.npy", distortion_coeffs)
+np.save("dist_coeffs.npy", distortion_coeffs)
